@@ -20,12 +20,12 @@ class stationDBClient : public ShellUtils {
             std::cout << "    -S, --seismo  <SEISMOGRAM>              : Performs a check request on the given seismogram" << std::endl;
         }
 
-        void downloadStation(std::string code) {
+        void downloadStation(std::string code, std::string path) {
             std::vector<std::string> s = getStationInfo(code);
             std::vector<std::vector<std::string>> i = getInstrumentInfo(code);
 
             std::ofstream info;
-            info.open("station.csv", std::ios_base::app);
+            info.open(path + "station.csv", std::ios_base::app);
             // Create Headers and add station information
             info << "Site,IRStationCode,FDSNCode,Latitude,Longitude,Elevation,Depth,CreationDate,TerminationDate\n";
             for (int i = 0; i < s.size(); ++i) {

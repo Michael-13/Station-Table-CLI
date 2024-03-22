@@ -23,7 +23,8 @@ class AbstractClient : public ShellUtils {
             if (func == "checkStation") {
                 if (args.size() > 2) {
                     if (args[2] == "-d") {
-                        sdb.downloadStation(args[1]);
+                        std::string path = (args.size() == 4) ? args[3] : "";
+                        sdb.downloadStation(args[1], path);
                     } else {
                         std::cout << "stationdb: invalid option -- " << "'" << args[2] << "'";
                         sdb.printHelp();

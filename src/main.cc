@@ -4,6 +4,7 @@
 int main(int argc, char *argv[]) {
     std::vector<std::string> sv = convertArgs(argc,argv);
     AbstractClient client;
-    client.start(argc,sv);
+    // note convertArgs does not include ./stationdb as an argument, therefore totalargs=argc-1
+    client.start(argc-1,sv);
     return 0;
 }
