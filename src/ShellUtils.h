@@ -2,39 +2,33 @@
 #define SHELLUTILS_H
 #include "utils.h"
 #include <iostream>
-#include <windows.h>
+//#include <windows.h>
 
 
-class ShellUtils {
-    protected:
-        HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);    
+class ShellUtils { 
     public:
         ShellUtils() {}
 
         void printRequestTime(duration<double, std::milli> t) {
-            SetConsoleTextAttribute(h,8);
-            std::wcout << L"\n Request Time: ";
-            SetConsoleTextAttribute(h,7); 
-            std::wcout << t.count() << "ms" << std::endl;
+            const auto now = std::chrono::system_clock::now();
+            const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+            std::cout << "\n\033[0;90m Request Time: ";
+            std::cout << t.count() << "ms | UTC Time: " << std::ctime(&t_c) << "\033[0m";
         }
 
         void printEndBanner() {
-            SetConsoleTextAttribute(h,8);
-            std::wcout << L" ----------------------------------------------------" << std::endl;
-            std::wcout << L" Michael-13\\StationDB v0.0.1" << std::endl;
-            SetConsoleTextAttribute(h,7); 
+            std::cout << "\033[0;90m ------------------------------------------------------------" << std::endl;
+            std::cout << " Michael-13\\StationDB v0.0.1\033[0m" << std::endl;
         }
 
         void handleNA(std::string s) {
-            (s == "N/A") ? SetConsoleTextAttribute(h,4) : SetConsoleTextAttribute(h,10);
-            std::wcout << s.c_str() << std::endl;
-            SetConsoleTextAttribute(h,7);
+            std::cout << ((s == "N/A") ? "\033[1;31m" : "\033[1;32m");
+            std::cout << s.c_str() << "\033[0m" << std::endl;
         }
 
         void handleInst(std::string s) {
-            SetConsoleTextAttribute(h,14);
-            std::wcout << s.c_str();
-            SetConsoleTextAttribute(h,7);
+            std::cout << "\033[1;33m" << s.c_str() << "\033[0m";
         }
 };
 #endif
+

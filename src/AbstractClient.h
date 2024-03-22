@@ -21,39 +21,52 @@ class AbstractClient : public ShellUtils {
 
         void callFunction(std::vector<std::string> args, std::string func) {
             if (func == "checkStation") {
+                if (args.size() > 2) {
+                    if (args[2] == "-d") {
+                        sdb.downloadStation(args[1]);
+                    } else {
+                        std::cout << "stationdb: invalid option -- " << "'" << args[2] << "'";
+                        sdb.printHelp();
+                        return;
+                    }
+                }
                 sdb.checkStation(args[1]);
+            } else if (func == "addInstrument") {
+                sdb.uploadCSV(args[1]);
             }
         }
     public:
         AbstractClient() {}
 
-        bool parseArguments(int tot, std::vector<std::string> args) {
+        int parseArguments(int tot, std::vector<std::string> args) {
             for (auto &v : basicCommands) {
                 if (args[0] == v[0] || args[1] == v[1]) {
                     sdb.printHelp();
-                    return true;
+                    return 0;
                 }
             }
-            if (tot < 3) return false;
+            if (tot < 2) return -1;
             for (auto &v : mainCommands) {
                 if (args[0] == v[0] || args[1] == v[1]) {
                     callFunction(args,v[2]);
-                    return true;
+                    return 0;
                 }
             }
-            return false;
+            return 1;
         }
 
         void start(int tot, std::vector<std::string> args) {
-            if (tot == 1) {
-                std::cout << std::endl;
-                std::cout << "Usage: stationdb [-A file] [-C code] [-h] [-S seismo]\n";
-                std::cout << std::endl;
+            if (tot == 0) {
                 sdb.printHelp();
                 return;
             }
-            if (!parseArguments(tot, args)) {
-                std::cout << "bad" << std::endl;
+            int exitCode = parseArguments(tot, args);
+            if (exitCode == 1) {
+                std::cout << "stationdb: invalid option -- " << "'" << args[0] << "'";
+                sdb.printHelp();
+            } else if (exitCode == -1) {
+                std::cout << "stationdb: option requires an argument -- " << "'" << args[0] << "'";
+                sdb.printHelp();
             }
         }
 

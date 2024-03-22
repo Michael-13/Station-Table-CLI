@@ -1,12 +1,13 @@
 #ifndef UTILS_H
 #define UTILS_H
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <chrono>
 #include <fcntl.h>
-#include <io.h>
+//#include <io.h>
 #include <stdio.h>
 
 // Namespaces
@@ -16,12 +17,15 @@ using std::chrono::duration;
 using std::chrono::milliseconds;
 
 // Files needed
-std::ifstream stationTable{"../tables/StationTable.csv"};
-std::ifstream instrumentTable{"../tables/InstrumentTable.csv"};
+const std::string stationPath = "../tables/StationTable.csv";
+const std::string instrumentPath = "../tables/InstrumentTable.csv";
 
 // Helper Functions
-std::vector<std::string> getStationInfo(const std::string code) {
+inline std::vector<std::string> getStationInfo(const std::string code) {
     std::vector<std::string> info;
+
+    std::ifstream stationTable;
+    stationTable.open(stationPath);
 
     std::string site, IRStationCode, FDSNCode, latitude, longitude, elevation,
                 depth, creationDate, terminationDate;
@@ -47,11 +51,16 @@ std::vector<std::string> getStationInfo(const std::string code) {
             break;
         }
     }
+
+    stationTable.close();
     return info;
 }
 
-std::vector<std::vector<std::string>> getInstrumentInfo(const std::string code) {
+inline std::vector<std::vector<std::string>> getInstrumentInfo(const std::string code) {
     std::vector<std::vector<std::string>> info;
+
+    std::ifstream instrumentTable;
+    instrumentTable.open(instrumentPath);
 
     bool found = false;
     std::string IRStationCode,instEraStart,instEraEnd,inst, 
@@ -77,16 +86,63 @@ std::vector<std::vector<std::string>> getInstrumentInfo(const std::string code) 
         }
     }
 
+    instrumentTable.close();
     return info;
 }
 
-std::vector<std::string> convertArgs(int tot, char* arg[]) {
+inline std::vector<std::string> convertArgs(int tot, char* arg[]) {
     std::vector<std::string> tmp;
     for (int i = 1; i < tot; ++i) {
         std::string s(arg[i]);
         tmp.emplace_back(s);
     }
     return tmp;
+}
+
+inline int cols(std::string path) {
+    std::ifstream file;
+    file.open(path);
+    std::string row;
+    std::getline(file,row,'\n');
+    file.close();
+
+    int cnt = 0;
+    for (auto &c : row) if (c == ',') ++cnt;
+
+    return cnt + 1;
+}
+
+inline std::vector<std::vector<std::string>> csvToVec(std::string path) {
+    std::vector<std::vector<std::string>> info;
+    std::ifstream file;
+    file.open(path);
+
+    int c = cols(path);
+    std::string str;
+    while (std::getline(file,str,',')) {
+        std::vector<std::string> tmp;
+        tmp.emplace_back(str);
+
+        for (int i = 1; i < c; ++i) {
+            if (i != c-1) std::getline(file,str,',');
+            else std::getline(file,str,'\n');
+            tmp.emplace_back(str);
+        }
+
+        info.emplace_back(tmp);
+    }
+
+    file.close();
+    return info;
+}
+
+inline std::vector<std::vector<std::string>> sortIncomingCSV(std::string path) {
+    std::vector<std::vector<std::string>> file = csvToVec(path);
+    // sort by station code alphabetically
+    std::sort(file.begin(), file.end(),
+            [](const std::vector<std::string> a, const std::vector<std::string> b) {return a[0] < b[0];});
+
+    return file;
 }
 
 #endif
