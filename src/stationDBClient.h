@@ -43,6 +43,8 @@ class stationDBClient : public ShellUtils {
             }
             }
             info.close();
+            std::cout << "\n " << code << " \033[1;32msuccessfully\033[0m downloaded to: \033[1;33m"
+                      << path << "station.csv\033[0m" << std::endl; 
         }
 
         void checkStation(std::string code) {
@@ -54,6 +56,8 @@ class stationDBClient : public ShellUtils {
             std::vector<std::string> sInfo = getStationInfo(code);
             std::vector<std::vector<std::string>> iInfo = getInstrumentInfo(code);
             auto t2 = high_resolution_clock::now();
+            
+            if (sInfo.size() != 8) return;
 
             std::cout << " Site:               ";
             handleNA(sInfo[0]);
@@ -94,8 +98,7 @@ class stationDBClient : public ShellUtils {
             }
             
             duration<double, std::milli> ms_double = t2 - t1;
-            printRequestTime(ms_double);
-            printEndBanner();
+            printEndBanner(ms_double);
         }
 
         void uploadCSV(std::string path) {
@@ -154,8 +157,7 @@ class stationDBClient : public ShellUtils {
                       << "\033[0m) succesfully uploaded" << std::endl; 
 
             duration<double, std::milli> ms_double = t2 - t1;
-            printRequestTime(ms_double);
-            printEndBanner();
+            printEndBanner(ms_double);
 
         }
 };
