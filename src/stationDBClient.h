@@ -57,7 +57,7 @@ class stationDBClient : public ShellUtils {
             std::vector<std::vector<std::string>> iInfo = getInstrumentInfo(code);
             auto t2 = high_resolution_clock::now();
             
-            if (sInfo.size() != 8) return;
+            //if (sInfo.size() != 8) return;
 
             std::cout << " Site:               ";
             handleNA(sInfo[0]);
