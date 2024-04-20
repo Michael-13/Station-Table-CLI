@@ -34,6 +34,23 @@ class AbstractClient : public ShellUtils {
                 sdb.checkStation(args[1]);
             } else if (func == "addInstrument") {
                 sdb.uploadCSV(args[1]);
+            } else if (func == "checkSeismo") {
+                if (args.size() > 2) {
+                    if (args[2] == "-d") {
+                        std::string inPath = "../../";
+                        inPath.append(args[1]);
+                        inPath.append(".tif");
+                        std::string outPath = (args.size() == 4) ? args[3] : "";
+                        outPath.append(args[1]);
+                        outPath.append(".tif");
+                        handleDownload(inPath,outPath);
+                    } else {
+                        std::cout << "stationdb: invalid option -- " << "'" << args[2] << "'";
+                        sdb.printHelp();
+                        return;
+                    }
+                }
+                sdb.checkSeismo(args[1]);
             }
         }
     public:

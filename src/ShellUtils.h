@@ -2,10 +2,9 @@
 #define SHELLUTILS_H
 #include "utils.h"
 #include <iostream>
-//#include <windows.h>
 
 
-class ShellUtils { 
+class ShellUtils {
     public:
         ShellUtils() {}
 
@@ -15,17 +14,18 @@ class ShellUtils {
             std::cout << "\n\033[0;90m Request Time: ";
             std::cout << t.count() << "ms | UTC Time: " << std::ctime(&t_c) << "\033[0m";
             std::cout << "\033[0;90m ------------------------------------------------------------" << std::endl;
-            std::cout << " Michael-13\\StationDB v0.0.1\033[0m" << std::endl;
+            std::cout << " Michael-13\\StationDB v0.0.2\033[0m" << std::endl;
         }
 
         void handleNA(std::string s) {
-            std::cout << ((s == "N/A") ? "\033[1;31m" : "\033[1;32m");
+            std::cout << ((s == "N/A" || s == "No" ) ? "\033[1;31m" : "\033[1;32m");
             std::cout << s.c_str() << "\033[0m" << std::endl;
         }
 
         void handleInst(std::string s) {
             std::cout << "\033[1;33m" << s.c_str() << "\033[0m";
         }
+
 };
 #endif
 

@@ -101,6 +101,69 @@ class stationDBClient : public ShellUtils {
             printEndBanner(ms_double);
         }
 
+        void checkSeismo(std::string id) {
+            std::cout << std::endl;
+            std::cout << "\033[0;90m >  Search Seismogram: \033[0m"; 
+            std::cout << id.c_str() << '\n' << std::endl;
+
+            auto t1 = high_resolution_clock::now();
+            std::vector<std::string> seisInfo = getSeismogramInfo(id);
+            if (seisInfo.empty()) {
+                std::cout << " No Seismogram was found" << std::endl;
+                return;
+            }
+            std::vector<std::string> staInfo = getStationInfo(seisInfo[1]);
+            std::vector<std::vector<std::string>> instTableInfo = getInstrumentInfo(seisInfo[1]);
+            std::pair<std::string,std::string> dep = {seisInfo[2],seisInfo[3]};
+            std::vector<std::string> instInfo = findInstrument(instTableInfo, dep); 
+            auto t2 = high_resolution_clock::now();
+            
+            std::cout << "\033[0;90m Seismogram Info:\033[0m\n";
+            std::cout << "  Start Time:                 ";
+            handleNA(seisInfo[3]);
+            std::cout << "  End Time:                   ";
+            handleNA(seisInfo[4]);
+            std::cout << "  Vectoried:                  ";
+            handleNA(seisInfo[5]);
+            std::cout << "\n\033[0;90m Station Info:\033[0m\n";
+            std::cout << "  Site:                       ";
+            handleNA(staInfo[0]);
+            std::cout << "  IRStationCode:              ";
+            handleNA(staInfo[1]);
+            std::cout << "  FDSNCode:                   ";
+            handleNA(staInfo[2]);
+            std::cout << "  Latitude:                   ";
+            handleNA(staInfo[3]);
+            std::cout << "  Longitude:                  ";
+            handleNA(staInfo[4]);
+            std::cout << "  Elevation:                  ";
+            handleNA(staInfo[5]);
+            std::cout << "  Depth:                      ";
+            handleNA(staInfo[6]);
+            std::cout << "  CreationDate:               ";
+            handleNA(staInfo[7]);
+            std::cout << "  TerminationDate:            ";
+            handleNA(staInfo[8]);
+            std::cout << "\n\033[0;90m Instrument Info:\033[0m\n";
+            std::cout << "  Instrument:                 ";
+            handleNA(instInfo[3]);
+            std::cout << "  Instrument Era Start:       ";
+            handleNA(instInfo[1]);
+            std::cout << "  Instrument Era End:         ";
+            handleNA(instInfo[2]);
+            std::cout << "  GalvoFreePeriod (seconds):  ";
+            handleNA(instInfo[4]);
+            std::cout << "  GalvoDampingConst:          ";
+            handleNA(instInfo[5]);
+            std::cout << "  Azimuth:                    ";
+            handleNA(instInfo[6]);
+            std::cout << "  Dip:                        ";
+            handleNA(instInfo[7]);
+
+            duration<double, std::milli> ms_double = t2 - t1;
+            printEndBanner(ms_double);
+        }
+
         void uploadCSV(std::string path) {
 
             std::cout << std::endl;
